@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PlaceMyOrder.Api.Middlewares;
 using PlaceMyOrder.Core.Facade;
 using PlaceMyOrder.Core.Services;
 using PlaceMyOrder.Domain.Interfaces;
@@ -6,8 +7,12 @@ using PlaceMyOrder.Infrastructure.Data;
 using PlaceMyOrder.Infrastructure.Mappings;
 using PlaceMyOrder.Infrastructure.Repositories;
 using PlaceMyOrder.Infrastructure.Utils;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add serilog
+builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
 
 // Add services to the container.
 
@@ -32,6 +37,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 
