@@ -13,9 +13,9 @@ namespace PlaceMyOrder.Core.Facade
     public class AuthFacade
     {
         private UserService userService;
-        public AuthFacade(IUserRepository userRepository, IMapper mapper)
+        public AuthFacade(IUserRepository userRepository, IMapper mapper, IPasswordEncoder passwordEncoder)
         {
-            userService = new UserService(userRepository, mapper);
+            userService = new UserService(userRepository, mapper, passwordEncoder);
         }
 
         public Task<User> CreateCustomerAsync(User customer)

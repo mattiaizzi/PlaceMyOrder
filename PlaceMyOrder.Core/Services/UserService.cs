@@ -10,11 +10,13 @@ namespace PlaceMyOrder.Core.Services
     {
         private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
+        private readonly IPasswordEncoder passwordEncoder;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordEncoder passwordEncoder)
         {
             this.userRepository = userRepository;
             this.mapper = mapper;
+            this.passwordEncoder = passwordEncoder;
         }
 
         internal async Task<User> CreateAdminAsync(User admin)
@@ -36,6 +38,7 @@ namespace PlaceMyOrder.Core.Services
             {
                 throw new UserAlreadyExistsException();
             }
+            user.Password = passwordEncoder.Encode(user.Password);
             var saved = await userRepository.AddAsync(mapper.Map<UserEntity>(user));
             return mapper.Map<User>(saved);
         }
