@@ -31,6 +31,26 @@ namespace PlaceMyOrder.Core.Services
             return await AddAsync(customer);
         }
 
+        internal async Task<User> FindUserByEmailAsync(string email)
+        {
+            var user = await userRepository.FindByEmailAsync(email);
+            if (user == null)
+            {
+                throw new UserNotFoundException();
+            }
+            return mapper.Map<User>(user);
+        }
+
+        public async Task<User> LoginAsync(string email, string password)
+        {
+            var user = await FindUserByEmailAsync(email);
+            if (!passwordEncoder.Matches(password, user.Password))
+            {
+                throw new UserNotFoundException();
+            }
+            return mapper.Map<User>(user);
+        }
+
         private async Task<User> AddAsync(User user)
         {
             var stored = await userRepository.FindByEmailAsync(user.Email);

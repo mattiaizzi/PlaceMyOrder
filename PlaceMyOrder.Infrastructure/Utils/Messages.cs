@@ -11,6 +11,7 @@ namespace PlaceMyOrder.Infrastructure.Utils
         // ERRORS
         public static String InternalServerError = "error.message.internalServerError";
         public static String UserAlreadyExists = "error.message.userAlreadyExists";
+        public static String LoginFailed = "error.message.loginFailed";
 
 
         // SUCCESS

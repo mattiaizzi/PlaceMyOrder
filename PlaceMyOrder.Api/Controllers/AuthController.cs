@@ -6,6 +6,7 @@ using AutoMapper;
 using PlaceMyOrder.Core.Model;
 using PlaceMyOrder.Core.Exceptions;
 using PlaceMyOrder.Infrastructure.Utils;
+using PlaceMyOrder.Api.Services;
 
 namespace PlaceMyOrder.Api.Controllers
 {
@@ -14,12 +15,14 @@ namespace PlaceMyOrder.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AuthFacade authFacade;
+        private readonly JwtService jwtService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
 
-        public AuthController(AuthFacade authFacade, IMapper mapper, ILogger<AuthController> logger)
+        public AuthController(AuthFacade authFacade, JwtService jwtService, IMapper mapper, ILogger<AuthController> logger)
         {
             this.authFacade = authFacade;
+            this.jwtService = jwtService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -36,6 +39,23 @@ namespace PlaceMyOrder.Api.Controllers
             {
                 logger.LogError(ex, $"user with email {registerRequestDto.Email} already exists");
                 return UnprocessableEntity(new { Message = Messages.UserAlreadyExists });
+            }
+        }
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
+        {
+            try
+            {
+                var user = await authFacade.LoginAsync(loginRequestDto.Email, loginRequestDto.Password);
+                var token = await jwtService.GenerateToken(user);
+                return Ok(new LoginResponseDto { Token = token });
+            }
+            catch (UserNotFoundException ex)
+            {
+                logger.LogError(ex, $"login failed {loginRequestDto.Email}");
+                return Unauthorized(new { Message = Messages.LoginFailed });
             }
         }
     }

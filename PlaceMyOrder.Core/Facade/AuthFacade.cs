@@ -28,6 +28,15 @@ namespace PlaceMyOrder.Core.Facade
             return userService.CreateAdminAsync(admin);
         }
 
+        public Task<User> GetUserByEmailAsync(String email)
+        {
+            return userService.FindUserByEmailAsync(email);
+        }
 
+
+        public Task<User> LoginAsync(string email, string password)
+        {
+            return userService.LoginAsync(email, password);
+        }
     }
 }
