@@ -12,6 +12,7 @@ namespace PlaceMyOrder.Infrastructure.Mappings
         public AutoMapperProfile()
         {
             CreateMap<User, RegisterRequestDto>().ReverseMap();
+            CreateMap<User, UserDto>().ReverseMap();
 
             CreateMap<User, UserEntity>()
                 .ForMember(destination => destination.RoleId, opt => opt.MapFrom(user => (int)user.Role))
@@ -33,10 +34,18 @@ namespace PlaceMyOrder.Infrastructure.Mappings
                 .ForMember(destintation => destintation.StreetNumber, opt => opt.MapFrom(order => order.Address.Number))
                 .ForMember(destintation => destintation.City, opt => opt.MapFrom(order => order.Address.City))
                 .ForMember(destintation => destintation.PostalCode, opt => opt.MapFrom(order => order.Address.PostalCode));
+            CreateMap<OrderEntity, Order>()
+                .ForMember(destination => destination.Address, opt => opt.MapFrom(entity => new Address { City = entity.City, Number = entity.StreetNumber, PostalCode = entity.PostalCode, Street = entity.Street }));
 
             CreateMap<Meal, MealEntity>()
                 .ForMember(destination => destination.CourseId, opt => opt.MapFrom(meal => (int)meal.Course))
                 .ForMember(destination => destination.Course, opt => opt.Ignore());
+
+            CreateMap<MealEntity, Meal>()
+                .ForMember(destination => destination.Course, opt => opt.MapFrom(meal => (Course)meal.CourseId));
+            CreateMap<MealDto, Meal>().ReverseMap();
+
+            CreateMap<Order, OrderDto>().ReverseMap();
 
         }
     }

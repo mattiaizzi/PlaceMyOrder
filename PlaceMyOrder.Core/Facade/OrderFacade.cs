@@ -28,5 +28,12 @@ namespace PlaceMyOrder.Core.Facade
             }
             return await orderService.CreateAsync(order, user);
         }
+
+        public async Task<Order?> GetOrderById(User? user, Guid id)
+        {
+            var order = await orderService.GetById(id);
+            if (!ImmutableList.Create(Role.Admin).Contains(user.Role) && (order != null && user.Email != order.Customer.Email)) { throw new UnauthorizedException(); }
+            return order;
+        }
     }
 }

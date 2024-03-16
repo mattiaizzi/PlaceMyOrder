@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,8 +15,8 @@ namespace PlaceMyOrder.Domain.Entities
 
         public Guid MealId { get; set; }
 
-        public MealEntity Meal { get; set; }
+        public virtual MealEntity Meal { get; set; }
 
-        public OrderEntity Order { get; set; }
+        public virtual OrderEntity Order { get; set; }
     }
 }

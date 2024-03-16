@@ -15,6 +15,7 @@ namespace PlaceMyOrder.Domain.Entities
         public int CourseId { get; set; }
         public CourseEntity Course { get; set; }
 
-        public List<OrderEntity> Orders { get; set; }
+        public virtual List<OrderMealEntity> OrderMeals { get; set; }
+        public virtual List<OrderEntity> Orders { get; set; }
     }
 }

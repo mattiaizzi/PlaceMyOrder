@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using PlaceMyOrder.Core.Exceptions;
 using PlaceMyOrder.Core.Model;
 using PlaceMyOrder.Domain.Entities;
 using PlaceMyOrder.Domain.Interfaces;
@@ -20,8 +21,19 @@ namespace PlaceMyOrder.Core.Services
         {
             order.CreationDate = DateTime.Now;
             order.Customer = customer;
-            await orderRepository.CreateAsync(mapper.Map<OrderEntity>(order));
-            return null;
+            var saved = await orderRepository.CreateAsync(mapper.Map<OrderEntity>(order));
+            return await GetById(saved.Id);
+
+        }
+
+        public async Task<Order?> GetById(Guid id)
+        {
+            var order = await orderRepository.GetByIdAsync(id);
+            if (order == null)
+            {
+                throw new OrderNotFoundException();
+            }
+            return mapper.Map<Order>(order);
         }
     }
 }

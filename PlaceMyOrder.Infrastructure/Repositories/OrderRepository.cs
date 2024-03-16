@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using PlaceMyOrder.Core.Model;
 using PlaceMyOrder.Domain.Entities;
 using PlaceMyOrder.Domain.Interfaces;
@@ -30,6 +31,15 @@ namespace PlaceMyOrder.Infrastructure.Repositories
             }
             await placeMyOrderDbContext.SaveChangesAsync();
             return order;
+        }
+
+        public async Task<OrderEntity?> GetByIdAsync(Guid id)
+        {
+            var result = await placeMyOrderDbContext
+                .Orders
+                .Include(o => o.Meals)
+                .FirstOrDefaultAsync(order => order.Id == id);
+            return result;
         }
     }
 }

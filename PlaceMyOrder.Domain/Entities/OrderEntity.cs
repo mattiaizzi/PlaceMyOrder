@@ -19,6 +19,8 @@ namespace PlaceMyOrder.Domain.Entities
         public String PostalCode { get; set; }
         public DateTime CreationDate { get; set; }
         public String CustomerId { get; set; }
+
+        public virtual List<OrderMealEntity> OrderMeals { get; set; }
         public virtual List<MealEntity> Meals { get; set; }
         public virtual UserEntity Customer { get; set; }
     }

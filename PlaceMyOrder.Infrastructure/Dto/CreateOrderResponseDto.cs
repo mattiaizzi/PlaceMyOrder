@@ -9,11 +9,6 @@ namespace PlaceMyOrder.Infrastructure.Dto
 {
     public class CreateOrderResponseDto
     {
-        public Guid Id { get; set; }
-        public User Customer { get; set; }
-        public DateTime CreationDate { get; set; }
-        public int OrderNumber { get; set; }
-        public Address Address { get; set; }
-        public List<Meal> Meals { get; set; }
+        public OrderDto Order { get; set; }
     }
 }

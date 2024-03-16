@@ -47,7 +47,7 @@ namespace PlaceMyOrder.Api.Controllers
                 var loginResponse = await authFacade.LoginAsync(loginRequestDto.Email, loginRequestDto.Password);
                 return Ok(mapper.Map<LoginResponseDto>(loginResponse));
             }
-            catch (UserNotFoundException ex)
+            catch (OrderNotFoundException ex)
             {
                 logger.LogError(ex, $"login failed {loginRequestDto.Email}");
                 return Unauthorized(new { Message = Messages.LoginFailed });

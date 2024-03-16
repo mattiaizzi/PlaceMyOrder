@@ -10,5 +10,6 @@ namespace PlaceMyOrder.Domain.Interfaces
     public interface IOrderRepository
     {
         Task<OrderEntity> CreateAsync(OrderEntity order);
+        Task<OrderEntity?> GetByIdAsync(Guid id);
     }
 }
