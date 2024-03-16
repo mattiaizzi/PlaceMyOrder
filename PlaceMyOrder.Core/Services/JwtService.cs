@@ -19,6 +19,7 @@ namespace PlaceMyOrder.Core.Services
 
         public async Task<User> GetUserFromToken(String token)
         {
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(jwtSecret);
             tokenHandler.ValidateToken(token, new TokenValidationParameters

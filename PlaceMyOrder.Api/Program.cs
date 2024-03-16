@@ -27,6 +27,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PlaceMyOrderDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PlaceMyOrderConnectionString")));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<IPasswordEncoder, BCryptPasswordEncoder>();
 builder.Services.AddScoped<AuthFacade>();
 
