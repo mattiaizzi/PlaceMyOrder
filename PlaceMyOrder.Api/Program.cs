@@ -28,8 +28,12 @@ builder.Services.AddDbContext<PlaceMyOrderDbContext>(options => options.UseSqlSe
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
 builder.Services.AddScoped<IPasswordEncoder, BCryptPasswordEncoder>();
+
 builder.Services.AddScoped<AuthFacade>();
+builder.Services.AddScoped<OrderFacade>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 

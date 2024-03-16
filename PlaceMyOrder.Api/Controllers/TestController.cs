@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PlaceMyOrder.Api.Helpers;
+using PlaceMyOrder.Core.Model;
 
 namespace PlaceMyOrder.Api.Controllers
 {
@@ -11,6 +12,7 @@ namespace PlaceMyOrder.Api.Controllers
         [Authorize]
         public IActionResult Get()
         {
+            var user = (User)HttpContext.Items["User"];
             return Ok("Hello world");
         }
     }
