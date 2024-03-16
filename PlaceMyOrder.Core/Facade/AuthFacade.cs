@@ -1,21 +1,22 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Options;
 using PlaceMyOrder.Core.Model;
 using PlaceMyOrder.Core.Services;
 using PlaceMyOrder.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PlaceMyOrder.Core.Facade
 {
     public class AuthFacade
     {
-        private UserService userService;
-        public AuthFacade(IUserRepository userRepository, IMapper mapper, IPasswordEncoder passwordEncoder)
+        private readonly UserService userService;
+        private readonly JwtService jwtService;
+        private readonly AppSettings appSettings;
+
+        public AuthFacade(IOptions<AppSettings> appSettings, IUserRepository userRepository, IMapper mapper, IPasswordEncoder passwordEncoder)
         {
+            this.appSettings = appSettings.Value;
             userService = new UserService(userRepository, mapper, passwordEncoder);
+            jwtService = new JwtService(this.appSettings.JwtSecret, userService);
         }
 
         public Task<User> CreateCustomerAsync(User customer)
@@ -28,15 +29,19 @@ namespace PlaceMyOrder.Core.Facade
             return userService.CreateAdminAsync(admin);
         }
 
-        public Task<User> GetUserByEmailAsync(String email)
+        public async Task<LoginResponse> LoginAsync(string email, string password)
         {
-            return userService.FindUserByEmailAsync(email);
+            var user = await userService.LoginAsync(email, password);
+            // TODO invalidare token precedenti utente
+            var token = await jwtService.GenerateTokenAsync(user);
+            return new LoginResponse() { Token = token };
         }
 
-
-        public Task<User> LoginAsync(string email, string password)
+        public async Task<User> GetUserFromTokenAsync(string token)
         {
-            return userService.LoginAsync(email, password);
+            var user = await jwtService.GetUserFromToken(token);
+            // TODO validare token
+            return user;
         }
     }
 }

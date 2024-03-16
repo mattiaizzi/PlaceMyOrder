@@ -18,6 +18,7 @@ namespace PlaceMyOrder.Infrastructure.Mappings
             //.ForMember(destination => destination.Role, opt => opt.MapFrom(user => new RoleEntity { Id = (int)user.Role, Name = user.Role.ToString(), Description = EnumUtils.GetEnumDescription(user.Role) }));
             CreateMap<UserEntity, User>()
                 .ForMember(destination => destination.Role, opt => opt.MapFrom(entity => (Role)entity.RoleId));
+            CreateMap<LoginResponse, LoginResponseDto>().ReverseMap();
         }
     }
 }

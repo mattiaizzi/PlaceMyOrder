@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using PlaceMyOrder.Api.Middlewares;
-using PlaceMyOrder.Api.Services;
 using PlaceMyOrder.Core.Facade;
+using PlaceMyOrder.Core.Model;
 using PlaceMyOrder.Core.Services;
 using PlaceMyOrder.Domain.Interfaces;
 using PlaceMyOrder.Infrastructure.Data;
-using PlaceMyOrder.Infrastructure.Dto;
 using PlaceMyOrder.Infrastructure.Mappings;
 using PlaceMyOrder.Infrastructure.Repositories;
 using PlaceMyOrder.Infrastructure.Utils;
@@ -28,13 +28,37 @@ builder.Services.AddDbContext<PlaceMyOrderDbContext>(options => options.UseSqlSe
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IPasswordEncoder, BCryptPasswordEncoder>();
-builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<AuthFacade>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
-builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
-builder.Services.AddAuthorizationBuilder();
+builder.Services.AddSwaggerGen(option =>
+{
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Place My Order", Version = "v1" });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -45,12 +69,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<JwtMiddleware>();
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
-
-
-app.UseAuthorization();
 
 app.MapControllers();
 

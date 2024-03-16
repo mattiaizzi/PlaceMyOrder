@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PlaceMyOrder.Infrastructure.Dto
+namespace PlaceMyOrder.Core.Model
 {
-    public class AppSettings
+    public class LoginResponse
     {
-        public string JwtSecret { get; set; } = string.Empty;
+        public String Token { get; set; }
     }
 }

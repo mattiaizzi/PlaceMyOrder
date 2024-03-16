@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PlaceMyOrder.Infrastructure.Dto;
 using PlaceMyOrder.Core.Facade;
 using AutoMapper;
 using PlaceMyOrder.Core.Model;
 using PlaceMyOrder.Core.Exceptions;
 using PlaceMyOrder.Infrastructure.Utils;
-using PlaceMyOrder.Api.Services;
 
 namespace PlaceMyOrder.Api.Controllers
 {
@@ -14,15 +12,13 @@ namespace PlaceMyOrder.Api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly AuthFacade authFacade;
-        private readonly JwtService jwtService;
         private readonly IMapper mapper;
         private readonly ILogger logger;
+        private readonly AuthFacade authFacade;
 
-        public AuthController(AuthFacade authFacade, JwtService jwtService, IMapper mapper, ILogger<AuthController> logger)
+        public AuthController(AuthFacade authFacade, IMapper mapper, ILogger<AuthController> logger)
         {
             this.authFacade = authFacade;
-            this.jwtService = jwtService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -48,9 +44,8 @@ namespace PlaceMyOrder.Api.Controllers
         {
             try
             {
-                var user = await authFacade.LoginAsync(loginRequestDto.Email, loginRequestDto.Password);
-                var token = await jwtService.GenerateToken(user);
-                return Ok(new LoginResponseDto { Token = token });
+                var loginResponse = await authFacade.LoginAsync(loginRequestDto.Email, loginRequestDto.Password);
+                return Ok(mapper.Map<LoginResponseDto>(loginResponse));
             }
             catch (UserNotFoundException ex)
             {

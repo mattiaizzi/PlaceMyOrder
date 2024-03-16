@@ -1,4 +1,4 @@
-﻿using PlaceMyOrder.Api.Services;
+﻿using PlaceMyOrder.Core.Facade;
 
 
 namespace PlaceMyOrder.Api.Middlewares
@@ -6,37 +6,30 @@ namespace PlaceMyOrder.Api.Middlewares
     public class JwtMiddleware
     {
         private readonly RequestDelegate next;
-        private readonly JwtService jwtService;
 
-        public JwtMiddleware(RequestDelegate next, JwtService jwtService)
+        public JwtMiddleware(RequestDelegate next)
         {
             this.next = next;
-            this.jwtService = jwtService;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context, AuthFacade authFacade)
         {
             var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
             if (token != null)
             {
-                await attachUserToContext(context, token);
+                try
+                {
+                    var user = await authFacade.GetUserFromTokenAsync(token);
+                    context.Items["User"] = user;
+                }
+                catch
+                {
+                    //Do nothing if JWT validation fails
+                    // user is not attached to context so the request won't have access to secure routes
+                }
             }
             await next(context);
-        }
-
-        private async Task attachUserToContext(HttpContext context, string token)
-        {
-            try
-            {
-                var user = await jwtService.GetUserFromToken(token);
-                context.Items["User"] = user;
-            }
-            catch
-            {
-                //Do nothing if JWT validation fails
-                // user is not attached to context so the request won't have access to secure routes
-            }
         }
     }
 }

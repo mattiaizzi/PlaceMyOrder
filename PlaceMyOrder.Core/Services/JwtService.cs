@@ -1,29 +1,26 @@
-﻿using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using PlaceMyOrder.Core.Facade;
+﻿using Microsoft.IdentityModel.Tokens;
 using PlaceMyOrder.Core.Model;
-using PlaceMyOrder.Infrastructure.Dto;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace PlaceMyOrder.Api.Services
+namespace PlaceMyOrder.Core.Services
 {
     public class JwtService
     {
-        private readonly AppSettings appSettings;
-        private readonly AuthFacade authFacade;
+        private readonly String jwtSecret;
+        private readonly UserService userService;
 
-        public JwtService(AuthFacade authFacade, IOptions<AppSettings> appSettings)
+        public JwtService(String jwtSecret, UserService userService)
         {
-            this.appSettings = appSettings.Value;
-            this.authFacade = authFacade;
+            this.jwtSecret = jwtSecret;
+            this.userService = userService;
         }
 
         public async Task<User> GetUserFromToken(String token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(appSettings.JwtSecret);
+            var key = Encoding.ASCII.GetBytes(jwtSecret);
             tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
@@ -37,15 +34,15 @@ namespace PlaceMyOrder.Api.Services
             var email = jwtToken.Claims.First(x => x.Type == "email").Value;
 
 
-            return await authFacade.GetUserByEmailAsync(email);
+            return await userService.FindUserByEmailAsync(email);
         }
 
-        public async Task<String> GenerateToken(User user)
+        public async Task<String> GenerateTokenAsync(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = await Task.Run(() =>
             {
-                var key = Encoding.ASCII.GetBytes(appSettings.JwtSecret);
+                var key = Encoding.ASCII.GetBytes(jwtSecret);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new[] {
