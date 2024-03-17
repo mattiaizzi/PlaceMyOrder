@@ -12,7 +12,7 @@ namespace PlaceMyOrder.Core.Strategies.BillStrategy
             foreach (var meal in meals)
             {
                 dictionary[meal.Course].Add(meal);
-                dictionary[meal.Course].OrderBy(meal => meal.Price);
+                dictionary[meal.Course] = dictionary[meal.Course].OrderBy(meal => meal.Price).ToList();
             }
 
             return calculatePrice(dictionary);
