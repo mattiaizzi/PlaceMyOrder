@@ -21,6 +21,7 @@ namespace PlaceMyOrder.Core.Services
         {
             order.CreationDate = DateTime.Now;
             order.Customer = customer;
+            await validateOrder(order);
             var saved = await orderRepository.CreateAsync(mapper.Map<OrderEntity>(order));
             return await GetById(saved.Id);
 
@@ -34,6 +35,14 @@ namespace PlaceMyOrder.Core.Services
                 throw new OrderNotFoundException();
             }
             return mapper.Map<Order>(order);
+        }
+
+        private async Task validateOrder(Order order)
+        {
+            foreach (var meal in order.Meals)
+            {
+                if ((await GetById(meal.Id)) == null) { throw new OrderNotFoundException(); }
+            }
         }
     }
 }

@@ -34,6 +34,14 @@ namespace PlaceMyOrder.Api.Controllers
                 var order = await orderFacade.CreateOrderAsync(user, mapper.Map<Order>(request));
                 return Ok(new CreateOrderResponseDto { Order = mapper.Map<OrderDto>(order) });
             }
+            catch (OrderNotFoundException ex)
+            {
+                logger.LogError(ex, "Uno o più pasti non sono presenti nel menu");
+                return UnprocessableEntity(new
+                {
+                    Message = Messages.MealNotFoundOrderCreation
+                });
+            }
             catch (UnauthorizedException ex)
             {
                 logger.LogError(ex, "errore durante la creazione");
@@ -47,7 +55,7 @@ namespace PlaceMyOrder.Api.Controllers
         [HttpGet]
         [Route("{id:Guid}")]
         [Authorize]
-        public async Task<ActionResult<CreateOrderResponseDto>> GetById([FromRoute] Guid id)
+        public async Task<ActionResult<OrderDto>> GetById([FromRoute] Guid id)
         {
             try
             {
@@ -63,6 +71,12 @@ namespace PlaceMyOrder.Api.Controllers
                     Message = Messages.Unauthorized
                 });
             }
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<List<PageableResponseDto<OrderDto>>>> GetAll()
+        {
+            return null;
         }
     }
 }

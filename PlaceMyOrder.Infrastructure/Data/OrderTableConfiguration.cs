@@ -18,6 +18,15 @@ namespace PlaceMyOrder.Infrastructure.Data
         {
             builder
             .ToTable("Orders");
+
+            builder.HasKey(t => t.Id);
+            builder.Property(t => t.Street).IsRequired();
+            builder.Property(t => t.City).IsRequired();
+            builder.Property(t => t.StreetNumber).IsRequired();
+            builder.Property(t => t.PostalCode).IsRequired();
+            builder.Property(t => t.CreationDate).IsRequired();
+            builder.Property(t => t.CustomerId).IsRequired();
+
             builder
             .HasMany(order => order.Meals)
                 .WithMany(meal => meal.Orders)

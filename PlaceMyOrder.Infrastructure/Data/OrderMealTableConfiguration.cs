@@ -21,6 +21,9 @@ namespace PlaceMyOrder.Infrastructure.Data
             builder
                 .HasKey(o => o.Id);
 
+            builder.Property(o => o.OrderId).IsRequired().HasColumnName("OrderId");
+            builder.Property(o => o.MealId).IsRequired().HasColumnName("MealId");
+
             builder
                 .HasOne(o => o.Meal)
                 .WithMany()

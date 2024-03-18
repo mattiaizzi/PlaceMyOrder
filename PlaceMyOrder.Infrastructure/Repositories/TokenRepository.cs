@@ -20,7 +20,7 @@ namespace PlaceMyOrder.Infrastructure.Repositories
         }
         public Task<List<TokenEntity>> FindAllValidTokenByUserAsync(UserEntity user)
         {
-            return placeMyOrderDbContext.Tokens.Where(token => !token.IsRevoked && token.UserId == user.Email).ToListAsync();
+            return placeMyOrderDbContext.Tokens.Where(token => !token.IsRevoked && token.UserId == user.Id).ToListAsync();
         }
 
         public async Task<TokenEntity> SaveAsync(TokenEntity token)

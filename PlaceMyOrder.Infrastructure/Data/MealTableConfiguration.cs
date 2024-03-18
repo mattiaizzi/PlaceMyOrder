@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PlaceMyOrder.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PlaceMyOrder.Infrastructure.Data
 {
@@ -15,6 +10,14 @@ namespace PlaceMyOrder.Infrastructure.Data
         {
             builder
             .ToTable("Meals");
+
+            builder.HasKey(t => t.Id);
+
+            builder.Property(t => t.Name).IsRequired();
+            builder.Property(t => t.Price).IsRequired();
+            builder.Property(t => t.CourseId).IsRequired();
+
+
             builder
             .HasMany(meal => meal.Orders)
                 .WithMany(order => order.Meals)

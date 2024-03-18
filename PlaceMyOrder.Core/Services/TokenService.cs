@@ -34,7 +34,7 @@ namespace PlaceMyOrder.Core.Services
 
         public async Task SaveUserTokenAsync(User user, String token)
         {
-            await tokenRepository.SaveAsync(new TokenEntity { IsRevoked = false, Token = token, UserId = user.Email });
+            await tokenRepository.SaveAsync(new TokenEntity { IsRevoked = false, Token = token, UserId = user.Id });
         }
 
         public async Task ValidateTokenAsync(User user, string token)

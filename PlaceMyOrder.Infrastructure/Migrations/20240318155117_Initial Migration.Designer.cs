@@ -12,8 +12,8 @@ using PlaceMyOrder.Infrastructure.Data;
 namespace PlaceMyOrder.Infrastructure.Migrations
 {
     [DbContext(typeof(PlaceMyOrderDbContext))]
-    [Migration("20240316181832_aggiunte tabelle per ordini")]
-    partial class aggiuntetabelleperordini
+    [Migration("20240318155117_Initial Migration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,21 +26,6 @@ namespace PlaceMyOrder.Infrastructure.Migrations
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.HasSequence<int>("OrderNumberSequence", "shared");
-
-            modelBuilder.Entity("MealEntityOrderEntity", b =>
-                {
-                    b.Property<Guid>("MealsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("OrdersId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("MealsId", "OrdersId");
-
-                    b.HasIndex("OrdersId");
-
-                    b.ToTable("MealEntityOrderEntity");
-                });
 
             modelBuilder.Entity("PlaceMyOrder.Domain.Entities.CourseEntity", b =>
                 {
@@ -61,32 +46,6 @@ namespace PlaceMyOrder.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Courses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Primo",
-                            Name = "First"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Secondo",
-                            Name = "Main"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Contorno",
-                            Name = "Side"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Dolce",
-                            Name = "Dessert"
-                        });
                 });
 
             modelBuilder.Entity("PlaceMyOrder.Domain.Entities.MealEntity", b =>
@@ -109,7 +68,7 @@ namespace PlaceMyOrder.Infrastructure.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Meals");
+                    b.ToTable("Meals", (string)null);
                 });
 
             modelBuilder.Entity("PlaceMyOrder.Domain.Entities.OrderEntity", b =>
@@ -125,9 +84,8 @@ namespace PlaceMyOrder.Infrastructure.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("OrderNumber")
                         .ValueGeneratedOnAdd()
@@ -150,7 +108,7 @@ namespace PlaceMyOrder.Infrastructure.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("PlaceMyOrder.Domain.Entities.OrderMealEntity", b =>
@@ -159,19 +117,31 @@ namespace PlaceMyOrder.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("MealEntityId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("MealId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("MealId");
+
+                    b.Property<Guid?>("OrderEntityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("OrderId");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MealEntityId");
+
                     b.HasIndex("MealId");
+
+                    b.HasIndex("OrderEntityId");
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderMeal");
+                    b.ToTable("OrderMeal", (string)null);
                 });
 
             modelBuilder.Entity("PlaceMyOrder.Domain.Entities.RoleEntity", b =>
@@ -193,20 +163,6 @@ namespace PlaceMyOrder.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Cliente",
-                            Name = "Customer"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Amministratore",
-                            Name = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("PlaceMyOrder.Domain.Entities.TokenEntity", b =>
@@ -222,9 +178,8 @@ namespace PlaceMyOrder.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -235,7 +190,12 @@ namespace PlaceMyOrder.Infrastructure.Migrations
 
             modelBuilder.Entity("PlaceMyOrder.Domain.Entities.UserEntity", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LastName")
@@ -253,26 +213,14 @@ namespace PlaceMyOrder.Infrastructure.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.HasKey("Email");
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("MealEntityOrderEntity", b =>
-                {
-                    b.HasOne("PlaceMyOrder.Domain.Entities.MealEntity", null)
-                        .WithMany()
-                        .HasForeignKey("MealsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlaceMyOrder.Domain.Entities.OrderEntity", null)
-                        .WithMany()
-                        .HasForeignKey("OrdersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("PlaceMyOrder.Domain.Entities.MealEntity", b =>
@@ -299,11 +247,19 @@ namespace PlaceMyOrder.Infrastructure.Migrations
 
             modelBuilder.Entity("PlaceMyOrder.Domain.Entities.OrderMealEntity", b =>
                 {
+                    b.HasOne("PlaceMyOrder.Domain.Entities.MealEntity", null)
+                        .WithMany("OrderMeals")
+                        .HasForeignKey("MealEntityId");
+
                     b.HasOne("PlaceMyOrder.Domain.Entities.MealEntity", "Meal")
                         .WithMany()
                         .HasForeignKey("MealId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("PlaceMyOrder.Domain.Entities.OrderEntity", null)
+                        .WithMany("OrderMeals")
+                        .HasForeignKey("OrderEntityId");
 
                     b.HasOne("PlaceMyOrder.Domain.Entities.OrderEntity", "Order")
                         .WithMany()
@@ -336,6 +292,16 @@ namespace PlaceMyOrder.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("PlaceMyOrder.Domain.Entities.MealEntity", b =>
+                {
+                    b.Navigation("OrderMeals");
+                });
+
+            modelBuilder.Entity("PlaceMyOrder.Domain.Entities.OrderEntity", b =>
+                {
+                    b.Navigation("OrderMeals");
                 });
 #pragma warning restore 612, 618
         }
