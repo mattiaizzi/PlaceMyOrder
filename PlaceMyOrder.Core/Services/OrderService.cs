@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PlaceMyOrder.Core.Exceptions;
 using PlaceMyOrder.Core.Model;
+using PlaceMyOrder.Core.Strategies.OrderListStrategy;
 using PlaceMyOrder.Domain.Entities;
 using PlaceMyOrder.Domain.Interfaces;
 
@@ -35,6 +36,29 @@ namespace PlaceMyOrder.Core.Services
                 throw new OrderNotFoundException();
             }
             return mapper.Map<Order>(order);
+        }
+
+        public async Task<Pageable<Order>> GetListAsync(IOrderListStrategy strategy, OrderListFilter filter)
+        {
+            var (orders, size) = await strategy.GetListAsync(orderRepository, filter);
+
+            var pageSize = filter.Size ?? size;
+            var pageNumber = filter.Page ?? 1;
+            var pageCount = (int)Math.Ceiling((double)size / pageSize);
+
+            if (pageNumber > pageCount)
+            {
+                throw new PageExceedException();
+            }
+
+            return new Pageable<Order>
+            {
+                ElementCount = size,
+                PageCount = pageCount,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                Items = mapper.Map<List<Order>>(orders)
+            };
         }
 
         private async Task validateOrder(Order order)

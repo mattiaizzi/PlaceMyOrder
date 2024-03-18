@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace PlaceMyOrder.Infrastructure.Dto
 {
     public class OrderListQueryParams : PageableRequestDto
     {
+        [Required]
         public DateTime DateStart { get; set; }
+        [Required]
         public DateTime DateEnd { get; set; }
-
-        public Guid UserId { get; set; }
+        public Guid? UserId { get; set; }
     }
+
 }

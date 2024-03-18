@@ -14,6 +14,8 @@ namespace PlaceMyOrder.Infrastructure.Utils
         public static String LoginFailed = "error.message.loginFailed";
         public static String Unauthorized = "error.message.unauthorized";
         public static String MealNotFoundOrderCreation = "error.message.mealNotFoundOrderCreation";
+        public static String PageExceed = "error.message.PageExceed";
+
 
 
         // SUCCESS

@@ -2,6 +2,8 @@
 using PlaceMyOrder.Core.Exceptions;
 using PlaceMyOrder.Core.Model;
 using PlaceMyOrder.Core.Services;
+using PlaceMyOrder.Core.Strategies.OrderListStrategy;
+using PlaceMyOrder.Domain.Entities;
 using PlaceMyOrder.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -34,6 +36,30 @@ namespace PlaceMyOrder.Core.Facade
             var order = await orderService.GetById(id);
             if (!ImmutableList.Create(Role.Admin).Contains(user.Role) && (order != null && user.Email != order.Customer.Email)) { throw new UnauthorizedException(); }
             return order;
+        }
+
+        public async Task<Pageable<Order>> GetOrderListAsync(User user, OrderListFilter filter)
+        {
+            IOrderListStrategy strategy = foundStrategy(user);
+            return await orderService.GetListAsync(strategy, filter);
+        }
+
+        private IOrderListStrategy foundStrategy(User user)
+        {
+            switch (user.Role)
+            {
+                case Role.Customer: return new CustomerOrderListStrategy(user);
+                case Role.Admin: return new AdminOrderListStrategy();
+                default: return new NotImplementedStrategy();
+            }
+        }
+
+        private class NotImplementedStrategy : IOrderListStrategy
+        {
+            public Task<(List<OrderEntity> list, int size)> GetListAsync(IOrderRepository repository, OrderListFilter filter)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

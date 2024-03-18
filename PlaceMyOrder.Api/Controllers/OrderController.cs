@@ -74,9 +74,31 @@ namespace PlaceMyOrder.Api.Controllers
         }
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<List<PageableResponseDto<OrderDto>>>> GetAll()
+        public async Task<ActionResult<List<PageableResponseDto<OrderDto>>>> GetAll([FromQuery] OrderListQueryParams queryParams)
         {
-            return null;
+            try
+            {
+                var user = (User)HttpContext.Items["User"];
+                var response = await orderFacade.GetOrderListAsync(user, mapper.Map<OrderListFilter>(queryParams));
+                return Ok(mapper.Map<PageableResponseDto<OrderDto>>(response));
+            }
+            catch (UnauthorizedException ex)
+            {
+                logger.LogError(ex, "L'utente non è autorizzato a vedere la lista");
+                return Unauthorized(new
+                {
+                    Message = Messages.Unauthorized
+                });
+            }
+            catch (PageExceedException ex)
+            {
+                logger.LogError(ex, "E' stata richiesta una pagina non disponibile");
+                return UnprocessableEntity(new
+                {
+                    Message = Messages.PageExceed
+                });
+            }
+
         }
     }
 }

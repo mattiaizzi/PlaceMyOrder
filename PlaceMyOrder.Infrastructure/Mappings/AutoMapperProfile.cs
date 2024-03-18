@@ -2,7 +2,6 @@
 using PlaceMyOrder.Infrastructure.Dto;
 using PlaceMyOrder.Core.Model;
 using PlaceMyOrder.Domain.Entities;
-using PlaceMyOrder.Infrastructure.Utils;
 using System.Data;
 
 namespace PlaceMyOrder.Infrastructure.Mappings
@@ -46,6 +45,10 @@ namespace PlaceMyOrder.Infrastructure.Mappings
             CreateMap<MealDto, Meal>().ReverseMap();
 
             CreateMap<Order, OrderDto>().ReverseMap();
+
+            CreateMap<Pageable<Order>, PageableResponseDto<OrderDto>>();
+
+            CreateMap<OrderListQueryParams, OrderListFilter>();
 
         }
     }

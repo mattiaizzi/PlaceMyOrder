@@ -1,15 +1,8 @@
 ﻿using Azure.Core;
 using Microsoft.EntityFrameworkCore;
-using PlaceMyOrder.Core.Model;
 using PlaceMyOrder.Domain.Entities;
 using PlaceMyOrder.Domain.Interfaces;
 using PlaceMyOrder.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace PlaceMyOrder.Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
@@ -40,6 +33,25 @@ namespace PlaceMyOrder.Infrastructure.Repositories
                 .Include(o => o.Meals)
                 .FirstOrDefaultAsync(order => order.Id == id);
             return result;
+        }
+
+        public async Task<(List<OrderEntity>, int totalElements)> GetListAsync(DateTime from, DateTime to, Guid? user, int pageSize = int.MaxValue, int pageIndex = 1)
+        {
+            var queryableList = placeMyOrderDbContext.Orders
+                .Include(o => o.Meals)
+                .Where(o => from <= o.CreationDate && o.CreationDate <= to)
+                .AsQueryable();
+
+            if (user != null)
+            {
+                queryableList = queryableList.Where(o => o.CustomerId == user);
+            }
+
+            int skip = pageSize == int.MaxValue ? 0 : pageSize * (pageIndex - 1);
+            var size = await queryableList.CountAsync();
+            queryableList = queryableList.Skip(skip).Take(pageSize);
+            return (await queryableList.ToListAsync(), size);
+
         }
     }
 }

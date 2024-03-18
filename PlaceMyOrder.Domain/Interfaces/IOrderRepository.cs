@@ -11,5 +11,6 @@ namespace PlaceMyOrder.Domain.Interfaces
     {
         Task<OrderEntity> CreateAsync(OrderEntity order);
         Task<OrderEntity?> GetByIdAsync(Guid id);
+        Task<(List<OrderEntity>, int totalElements)> GetListAsync(DateTime from, DateTime to, Guid? user, int pageSize = int.MaxValue, int pageIndex = 1);
     }
 }

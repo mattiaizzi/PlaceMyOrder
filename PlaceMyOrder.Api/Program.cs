@@ -35,6 +35,7 @@ builder.Services.AddScoped<IPasswordEncoder, BCryptPasswordEncoder>();
 builder.Services.AddScoped<AuthFacade>();
 builder.Services.AddScoped<OrderFacade>();
 
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 builder.Services.AddSwaggerGen(option =>
