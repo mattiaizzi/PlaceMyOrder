@@ -30,6 +30,7 @@ namespace PlaceMyOrder.Infrastructure.Repositories
         {
             var result = await placeMyOrderDbContext
                 .Orders
+                .Include(o => o.Customer)
                 .Include(o => o.Meals)
                 .FirstOrDefaultAsync(order => order.Id == id);
             return result;
@@ -38,6 +39,7 @@ namespace PlaceMyOrder.Infrastructure.Repositories
         public async Task<(List<OrderEntity>, int totalElements)> GetListAsync(DateTime from, DateTime to, Guid? user, int pageSize = int.MaxValue, int pageIndex = 1)
         {
             var queryableList = placeMyOrderDbContext.Orders
+                .Include(o => o.Customer)
                 .Include(o => o.Meals)
                 .Where(o => from <= o.CreationDate && o.CreationDate <= to)
                 .AsQueryable();

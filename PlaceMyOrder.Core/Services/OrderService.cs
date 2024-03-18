@@ -44,9 +44,9 @@ namespace PlaceMyOrder.Core.Services
 
             var pageSize = filter.Size ?? size;
             var pageNumber = filter.Page ?? 1;
-            var pageCount = (int)Math.Ceiling((double)size / pageSize);
+            var pageCount = size > 0 ? (int)Math.Ceiling((double)size / pageSize) : 0;
 
-            if (pageNumber > pageCount)
+            if (size > 0 && pageNumber > pageCount)
             {
                 throw new PageExceedException();
             }
