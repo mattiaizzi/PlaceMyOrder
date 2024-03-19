@@ -28,6 +28,34 @@ To run the code locally you need:
 ```
 <p>"now listening on" will appear in the console, copy the address and paste it into your browser bar by adding "swagger/index.html" (ex. https://localhost:7002/swagger/index.html)</p>
 
+<p>Pre loaded users</p>
+<table>
+	<thead>
+		<tr>
+			<td>Role</td>
+			<td>Email</td>
+			<td>Password</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Customer</td>
+			<td>customer1@placemyorder.com</td>
+			<td>customer</td>
+		</tr>
+		<tr>
+			<td>Customer</td>
+			<td>customer2@placemyorder.com</td>
+			<td>customer</td>
+		</tr>
+		<tr>
+			<td>Admin</td>
+			<td>admin@placemyorder.com</td>
+			<td>admin</td>
+		</tr>
+	</tbody>
+</table>
+
 ## Project Specifications
 
    Traccia n.05
