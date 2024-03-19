@@ -28,7 +28,7 @@ namespace PlaceMyOrder.Infrastructure.Mappings
 
             CreateMap<Order, OrderEntity>()
                 .ForMember(destination => destination.Customer, opt => opt.Ignore())
-                .ForMember(destintation => destintation.CustomerId, opt => opt.MapFrom(order => order.Customer.Email))
+                .ForMember(destintation => destintation.CustomerId, opt => opt.MapFrom(order => order.Customer.Id))
                 .ForMember(destintation => destintation.Street, opt => opt.MapFrom(order => order.Address.Street))
                 .ForMember(destintation => destintation.StreetNumber, opt => opt.MapFrom(order => order.Address.Number))
                 .ForMember(destintation => destintation.City, opt => opt.MapFrom(order => order.Address.City))
