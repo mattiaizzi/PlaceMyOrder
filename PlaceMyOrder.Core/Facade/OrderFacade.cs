@@ -17,10 +17,13 @@ namespace PlaceMyOrder.Core.Facade
     public class OrderFacade
     {
         private readonly OrderService orderService;
+        private readonly MealService mealService;
 
-        public OrderFacade(IOrderRepository orderRepository, IMapper mapper)
+        public OrderFacade(IOrderRepository orderRepository, IMealRepository mealRepository, IMapper mapper)
         {
             orderService = new OrderService(orderRepository, mapper);
+
+            mealService = new MealService(mealRepository, mapper);
         }
         public async Task<Order> CreateOrderAsync(User? user, Order order)
         {
@@ -28,7 +31,16 @@ namespace PlaceMyOrder.Core.Facade
             {
                 throw new UnauthorizedException($"{user.Role.ToString()} non è abilitato alla creazione di un ordine");
             }
+            foreach (var meal in order.Meals)
+            {
+                await mealService.GetByIdAsync(meal.Id);
+            }
             return await orderService.CreateAsync(order, user);
+        }
+
+        public Task<List<Meal>> GetMeals()
+        {
+            return mealService.GetListAsync();
         }
 
         public async Task<Order?> GetOrderById(User? user, Guid id)

@@ -34,7 +34,7 @@ namespace PlaceMyOrder.Api.Controllers
                 var order = await orderFacade.CreateOrderAsync(user, mapper.Map<Order>(request));
                 return Ok(new CreateOrderResponseDto { Order = mapper.Map<OrderDto>(order) });
             }
-            catch (OrderNotFoundException ex)
+            catch (MealNotFoundException ex)
             {
                 logger.LogError(ex, "Uno o più pasti non sono presenti nel menu");
                 return UnprocessableEntity(new
